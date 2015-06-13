@@ -32,7 +32,7 @@ for timezone in args[1:] :
     env["TZ"] = timezone
     sys.stdout.write \
       (
-        "{tz}: {date}\n".format
+        "{tz:.<24}: {date}\n".format
           (
             tz = timezone,
             date =
