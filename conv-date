@@ -1,0 +1,46 @@
+#!/usr/bin/python3
+#+
+# Convert a date/time to different timezones. Invoke this script
+# as follows:
+#
+#     conv-date <date-time> <timezone> ...
+#
+# where <date-time> is a date/time string in any of the formats
+# acceptable to the date(1) command, and the remaining arguments
+# are one or more timezone specs. The specified date-time is
+# output in each of the corresponding timezones.
+#
+# Copyright 2015 Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
+# Licensed under CC-BY <http://creativecommons.org/licenses/by/4.0/>.
+#-
+
+import sys
+import os
+import subprocess
+import getopt
+
+args = sys.argv[1:]
+if len(args) < 2 :
+    raise getopt.GetoptError("usage: {} <date-time> <timezone> ...".format(sys.argv[0]))
+#end if
+timestamp = int(subprocess.check_output
+  (
+    args = ("date", "-d", args[0], "+%s"),
+  ).strip())
+env = dict(os.environ)
+for timezone in args[1:] :
+    env["TZ"] = timezone
+    sys.stdout.write \
+      (
+        "{tz}: {date}\n".format
+          (
+            tz = timezone,
+            date =
+                subprocess.check_output
+                  (
+                    args = ("date", "-d", "1970-01-01 00:00:00Z + {} seconds".format(timestamp)),
+                    env = env,
+                  ).strip().decode("utf-8"),
+          )
+      )
+#end for
