@@ -10,6 +10,13 @@
 # are one or more timezone specs. The specified date-time is
 # output in each of the corresponding timezones.
 #
+# For example, the command
+#
+#     conv-date now UTC CET US/Pacific Asia/Kuala_Lumpur NZ
+#
+# shows the current time in UTC, Central European, US West Coast,
+# Malaysian and New Zealand timezones.
+#
 # Copyright 2015 Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
 # Licensed under CC-BY <http://creativecommons.org/licenses/by/4.0/>.
 #-
