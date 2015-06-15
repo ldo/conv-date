@@ -35,8 +35,15 @@ timestamp = int(subprocess.check_output
     args = ("date", "-d", args[0], "+%s"),
   ).strip())
 env = dict(os.environ)
+default_timezone = env.get("TZ", None)
 for timezone in args[1:] :
-    env["TZ"] = timezone
+    if timezone != "" :
+        env["TZ"] = timezone
+    elif default_timezone != None :
+        env["TZ"] = default_timezone
+    else :
+        env.pop("TZ", None)
+    #end if
     sys.stdout.write \
       (
         "{tz:.<24}: {date}\n".format
