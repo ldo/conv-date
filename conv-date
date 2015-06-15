@@ -12,6 +12,8 @@
 # are “--rfc-2822” and “--rfc-3339={date|seconds|ns}”; for the
 # meanings of these, see the date(1) man page.
 #
+# An empty timezone is treated as local time.
+#
 # For example, the command
 #
 #     conv-date now UTC CET US/Pacific Asia/Kuala_Lumpur NZ
@@ -19,7 +21,12 @@
 # shows the current time in UTC, Central European, US West Coast,
 # Malaysian and New Zealand timezones.
 #
-# An empty timezone is treated as local time.
+# Another example: show a time, given in another time zone:
+#
+#     TZ=Asia/Shanghai ./conv-date '15-Jun-2015 13:00' '' UTC Asia/Kolkata
+#
+# shows the specified date/time, interpreted according to China time,
+# is displayed in that time zone, UTC, and India time.
 #
 # Copyright 2015 Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
 # Licensed under CC-BY <http://creativecommons.org/licenses/by/4.0/>.
