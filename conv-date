@@ -30,6 +30,30 @@ import os
 import subprocess
 import getopt
 
+def get_default_timezone() :
+    "tries to get the name of the current default timezone."
+    result = env.get("TZ", None)
+    if result == None :
+        # see if /etc/localtime is a symlink to a zoneinfo file, and
+        # get the timezone name from the filename if so
+        try :
+            tz_link = os.readlink("/etc/localtime")
+        except OSError :
+            tz_link = None
+        #end try
+        if tz_link != None :
+            parent_dir = "/zoneinfo/"
+            result = tz_link[tz_link.index(parent_dir) + len(parent_dir):]
+        #end if
+    #end if
+    return \
+        result
+#end get_default_timezone
+
+#+
+# Mainline
+#-
+
 (opts, args) = getopt.getopt \
   (
 	sys.argv[1:],
@@ -53,12 +77,13 @@ timestamp = int(subprocess.check_output
     args = ("date", "-d", args[0], "+%s"),
   ).strip())
 env = dict(os.environ)
-default_timezone = env.get("TZ", None)
+default_timezone = get_default_timezone()
 for timezone in args[1:] :
     if timezone != "" :
         env["TZ"] = timezone
     elif default_timezone != None :
         env["TZ"] = default_timezone
+        timezone = default_timezone
     else :
         env.pop("TZ", None)
     #end if
