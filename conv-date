@@ -3,12 +3,14 @@
 # Convert a date/time to different timezones. Invoke this script
 # as follows:
 #
-#     conv-date <date-time> <timezone> ...
+#     conv-date [opts...] <date-time> <timezone> ...
 #
 # where <date-time> is a date/time string in any of the formats
 # acceptable to the date(1) command, and the remaining arguments
 # are one or more timezone specs. The specified date-time is
-# output in each of the corresponding timezones.
+# output in each of the corresponding timezones. The valid opts
+# are “--rfc-2822” and “--rfc-3339={date|seconds|ns}”; for the
+# meanings of these, see the date(1) man page.
 #
 # For example, the command
 #
@@ -16,6 +18,8 @@
 #
 # shows the current time in UTC, Central European, US West Coast,
 # Malaysian and New Zealand timezones.
+#
+# An empty timezone is treated as local time.
 #
 # Copyright 2015 Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
 # Licensed under CC-BY <http://creativecommons.org/licenses/by/4.0/>.
@@ -26,10 +30,24 @@ import os
 import subprocess
 import getopt
 
-args = sys.argv[1:]
+(opts, args) = getopt.getopt \
+  (
+	sys.argv[1:],
+	"",
+	["rfc-2822", "rfc-3339="]
+  )
+date_args = []
+for keyword, value in opts :
+    if keyword == "--rfc-2822" :
+        date_args.append(keyword)
+    elif keyword == "--rfc-3339" :
+        date_args.append(keyword + "=" + value)
+    #end if
+#end for
 if len(args) < 2 :
     raise getopt.GetoptError("usage: {} <date-time> <timezone> ...".format(sys.argv[0]))
 #end if
+date_args = tuple(date_args)
 timestamp = int(subprocess.check_output
   (
     args = ("date", "-d", args[0], "+%s"),
@@ -52,7 +70,7 @@ for timezone in args[1:] :
             date =
                 subprocess.check_output
                   (
-                    args = ("date", "-d", "1970-01-01 00:00:00Z + {} seconds".format(timestamp)),
+                    args = ("date",) + date_args + ("-d", "1970-01-01 00:00:00Z + {} seconds".format(timestamp)),
                     env = env,
                   ).strip().decode("utf-8"),
           )
