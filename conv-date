@@ -63,9 +63,9 @@ def get_default_timezone() :
 
 (opts, args) = getopt.getopt \
   (
-	sys.argv[1:],
-	"",
-	["rfc-2822", "rfc-3339="]
+    sys.argv[1:],
+    "",
+    ["rfc-2822", "rfc-3339="]
   )
 date_args = []
 for keyword, value in opts :
