@@ -53,6 +53,14 @@ def get_default_timezone() :
             result = tz_link[tz_link.index(parent_dir) + len(parent_dir):]
         #end if
     #end if
+    if result == None :
+        # check for /etc/timezone, and read timezone name from that if present
+        try :
+            result = open("/etc/timezone").read().strip()
+        except IOError :
+            result = None
+        #end try
+    #end if
     return \
         result
 #end get_default_timezone
